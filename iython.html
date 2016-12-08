@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>welcome to Iython</title>
+<meta name="keywords" content="编程语言，编译原理"/>
+<meta name="description" content=""/>
+<meta name="viewport" content="width=device-width"/>
+<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap-theme.min.css">
+<script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+<script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+<script src="iython-complete.js"></script>
+
+
+
+<style type="text/css">
+   
+</style>
+</head>
+
+<body>
+<h1 style="text-align:center">欢迎来到Iython</h1>
+<div class="container">
+    <div class="row col-xs-3">
+    <p><h3>&nbsp&nbsp&nbsp&nbspIython是一门语法有点像python的解释型编程语言，其第一个解释器由
+    <a href="http://seektruth.github.io">seektruth</a>用JavaScript实现,Iython是弱类型的，它支持循环、变量的局部作用域，内置了链表和字典的数据结构，在Iython中函数是一等公民，这意味着我们可以把函数赋值给一个变量，Iython也支持闭包和lambda,内置的函数包括range、print、map、reduce</h5></p>
+    </div>
+    <div class="row col-xs-1"></div>
+    <div class="row col-xs-4">
+        <h3>在这里输入想要解释的代码</h3>
+        <br>
+        <textarea rows ="15" cols="45" id="code">#这是注释
+print("to Iython or not Iython,that's a question")</textarea>
+        <br><br>
+        <div style="text-align:right"><button type="button" id="run" class="btn btn-info" >运行</button></div>
+    </div>
+    <div class="row col-xs-1"></div>
+    <div class="row col-xs-3">
+        <h3>这里是运行的结果</h3>
+        <br>
+        <textarea id = "con" rows="15" cols="30"></textarea>
+    </div>
+</div>
+<br><br>
+<div class="container">
+    <div class="row col-xs-3"><h3 style="text-align:center"><span class="label label-default">示例代码</span></h3></div>
+    <div class="row col-xs-3">
+        <a class="example" name="hello" href="#">hello world</a><br>
+        <a class="example" name="varible">数字、字符串、变量</a><br>
+        <a class="example" name="for">foreach循环和range函数</a>
+    </div>
+    <div class="row col-xs-3">
+        <a class="example" name="expression" href="#">算术与布尔运算</a><br>
+        <a class="example" name="set">列表和字典</a><br>
+        <a class="example" name="while">while循环</a>
+    </div>
+    <div class="row col-xs-3">
+        <a class="example" name="if" href="#">if,elif,else</a><br>
+        <a class="example" name="func">函数定义、调用，作用域</a><br>
+        <a class="example" name="closure">闭包，匿名函数</a><br>
+        <a class="example" name="map">高阶函数</a><br>
+    </div>
+</div>
+</body>
+</html>
+
+
+
+<script type="text/javascript">
+
+    var codes = {
+        "hello" : `print(to Iython, or not to Iython that's question)`,
+        "varible":`a = 3
+print(a)
+a = "123"
+print(a) `,
+        "expression" : `print(3+5*2)
+print(2+4/2)
+print(3<2)
+print("123"=="123")`,
+        "set" : `list = [1,"123",["a"]]
+print(list)
+print(list[1])
+print(list[2])
+print(list[2][0])
+dict = {"a" : 2,"b":"123"}
+print(dict["b"])`,
+"for": `for a in range(10) begin
+    print(a)
+end`,
+"while":`a = 10
+while a > 0 begin
+    print(a)
+    a = a - 3
+end `,
+"if" : `a=10;
+if a > 100 begin
+    print("100")
+end elif a > 10 begin
+    print("10")
+end else begin
+    print("0")
+end`,
+func:`a = 2
+def add(x,y) begin
+    a = 3
+    print(a)
+    x + y
+end
+print(a)
+print(add(5,6))`,
+closure:`def addn(n) begin
+    (x) -> { x + n }
+end
+a = addn(2)
+b = addn(3)
+print(a(2))
+print(b(2))`,
+map:`a = map([1,2,3],(x)->{x + 3})
+print(a)
+b = reduce(a,(a,b) -> { a+b+1})
+print(b)`
+
+    }
+
+    var input = $("#code")[0];
+
+    var consquence = $("#con")[0];
+
+    $(document).ready(function(){
+        $(".example").click(function(a){
+            var code = codes[a.toElement.name];
+            input.value = code;
+            return false;
+        });
+
+        console.log(123);
+
+        $("#run").click(function(a){
+            var code = input.value;
+            var out = run(code);
+            consquence.value = out;
+        });
+    });
+</script>

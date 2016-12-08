@@ -9,6 +9,7 @@ Interpreter = function() {
     this.rootScope.map = buildin.map;
     this.rootScope.reduce = buildin.reduce;
     this.currentScope = this.rootScope;
+    this.outBuffer = "";
     tokenFuncMap = {
         '+': function(a,b){
             return a+b;

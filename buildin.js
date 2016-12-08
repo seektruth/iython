@@ -1,7 +1,7 @@
 print = {
     _args : ['a'],
     call : function(args){
-        console.log(args[0]);
+        args[1].outBuffer = args[1].outBuffer + args[0] + '\n';
         return args[0];
     }
 }
