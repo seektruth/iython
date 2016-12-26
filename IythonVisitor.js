@@ -37,6 +37,11 @@ IythonVisitor.prototype.visitArgs = function(ctx) {
 };
 
 
+// Visit a parse tree produced by IythonParser#defaultarg.
+IythonVisitor.prototype.visitDefaultarg = function(ctx) {
+};
+
+
 // Visit a parse tree produced by IythonParser#assign.
 IythonVisitor.prototype.visitAssign = function(ctx) {
 };

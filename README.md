@@ -20,7 +20,7 @@ iython-complete.js是编译后的完整的代码，使用对其进行引用即�
 
 `<script src="iython-complete.js"></script>`
 
-对iython进行引用，
+对iython解释器进行引用，
 
 然后调用
 
@@ -28,4 +28,6 @@ iython-complete.js是编译后的完整的代码，使用对其进行引用即�
 
 函数就可以执行iython语言的解释，run函数的program参数就是程序字符串。run函数会返回解释的结果。
 
-如果在node当中使用，直接在iython-complete.js当中编写调用run函数的d代码即可
+如果在node当中使用，直接在iython-complete.js当中编写调用run函数的d代码即可。
+
+你可以在[这里](http://seektruth.github.io/iython/iython.html)看到更多的例子 

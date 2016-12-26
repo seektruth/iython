@@ -12,8 +12,6 @@
 <script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
 <script src="iython-complete.js"></script>
 
-
-
 <style type="text/css">
    
 </style>
@@ -23,15 +21,21 @@
 <h1 style="text-align:center">欢迎来到Iython</h1>
 <div class="container">
     <div class="row col-xs-3">
-    <p><h3>&nbsp&nbsp&nbsp&nbspIython是一门语法有点像python的解释型编程语言，其第一个解释器由
-    <a href="http://seektruth.github.io">seektruth</a>用JavaScript实现,Iython是弱类型的，它支持循环、变量的局部作用域，内置了链表和字典的数据结构，在Iython中函数是一等公民，这意味着我们可以把函数赋值给一个变量，Iython也支持闭包和lambda,内置的函数包括range、print、map、reduce</h5></p>
+    <p><h3>Iython是一门语法有点像python的解释型编程语言，Iython是弱类型的，它支持循环、变量的局部作用域，内置了链表和字典的数据结构，总体设计：</h5></p>
+    <h3>
+    <ul>
+        <li>函数是一等公民</li>
+        <li>语句都是表达式</li>
+        <li>没有return、break语句</li>
+        <li>面向过程，一定程度上支持函数式编程</li>
+    </ul></h3>
     </div>
     <div class="row col-xs-1"></div>
     <div class="row col-xs-4">
         <h3>在这里输入想要解释的代码</h3>
         <br>
-        <textarea rows ="15" cols="45" id="code">#这是注释
-print("to Iython or not Iython,that's a question")</textarea>
+        <textarea rows ="10" cols="45" id="code" style="font-size:21px">#这是注释
+print("Hello,world")</textarea>
         <br><br>
         <div style="text-align:right"><button type="button" id="run" class="btn btn-info" >运行</button></div>
     </div>
@@ -39,7 +43,7 @@ print("to Iython or not Iython,that's a question")</textarea>
     <div class="row col-xs-3">
         <h3>这里是运行的结果</h3>
         <br>
-        <textarea id = "con" rows="15" cols="30"></textarea>
+        <textarea id = "con" rows="10" cols="30" style="font-size:21px"></textarea>
     </div>
 </div>
 <br><br>
@@ -48,12 +52,15 @@ print("to Iython or not Iython,that's a question")</textarea>
     <div class="row col-xs-3">
         <a class="example" name="hello" href="#">hello world</a><br>
         <a class="example" name="varible">数字、字符串、变量</a><br>
-        <a class="example" name="for">foreach循环和range函数</a>
+        <a class="example" name="for">foreach循环和range函数</a><br>
+        <a class="example" name="default">默认参数</a>
+
     </div>
     <div class="row col-xs-3">
         <a class="example" name="expression" href="#">算术与布尔运算</a><br>
         <a class="example" name="set">列表和字典</a><br>
-        <a class="example" name="while">while循环</a>
+        <a class="example" name="while">while循环</a><br>
+        <a class="example" name="push">push和pop函数</a>
     </div>
     <div class="row col-xs-3">
         <a class="example" name="if" href="#">if,elif,else</a><br>
@@ -70,7 +77,7 @@ print("to Iython or not Iython,that's a question")</textarea>
 <script type="text/javascript">
 
     var codes = {
-        "hello" : `print(to Iython, or not to Iython that's question)`,
+        "hello" : `print("Hello,world")`,
         "varible":`a = 3
 print(a)
 a = "123"
@@ -83,7 +90,8 @@ print("123"=="123")`,
 print(list)
 print(list[1])
 print(list[2])
-print(list[2][0])
+b = list[2]
+print(b[0])
 dict = {"a" : 2,"b":"123"}
 print(dict["b"])`,
 "for": `for a in range(10) begin
@@ -120,9 +128,18 @@ print(b(2))`,
 map:`a = map([1,2,3],(x)->{x + 3})
 print(a)
 b = reduce(a,(a,b) -> { a+b+1})
-print(b)`
-
-    }
+print(b)`,
+default: `def addn(a,n=1) begin
+    a + n
+end
+print(addn(3))
+print(addn(3,7))`,
+push:`a = [1,2,3]
+push(a,"123")
+print(a)
+pop(a)
+print(a)`    
+}
 
     var input = $("#code")[0];
 

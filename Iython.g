@@ -23,7 +23,9 @@ expression[int pr]: atom
 def : 'def' NAME args 'begin' '\n' 
          statements '\n' 'end';
 
-args : '()' | ('(' NAME (',' NAME)* ')');
+args : '()' | ('(' NAME (',' NAME)* (',' defaultarg)* ')');
+
+defaultarg : NAME '=' atom ; 
 
 assign : NAME '=' statement ;
 

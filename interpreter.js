@@ -8,6 +8,8 @@ Interpreter = function() {
     this.rootScope.range = buildin.range;
     this.rootScope.map = buildin.map;
     this.rootScope.reduce = buildin.reduce;
+    this.rootScope.push = buildin.push;
+    this.rootScope.pop = buildin.pop;
     this.currentScope = this.rootScope;
     this.outBuffer = "";
     tokenFuncMap = {
@@ -65,16 +67,13 @@ Interpreter.prototype.visitStatements = function(ctx) {
 };
 
 Interpreter.prototype.visitStatement = function(ctx){
-    //console.log(ctx.getText())
     return this.visit(ctx.getChild(0));
 }
 
 Interpreter.prototype.visitExpression = function(ctx) {
-    //console.log("expresssion");
 
-    //console.log(ctx.getChild(0).getText());
     var a = this.visit(ctx.getChild(0));
-    //console.log(ctx.getChildCount());
+
    
     for (var i = 1; i<ctx.getChildCount();i+=2){
         var op = ctx.getChild(i).getText();
@@ -168,7 +167,8 @@ Interpreter.prototype.visitAssign = function(ctx){
 
 Interpreter.prototype.visitLambda = function(ctx){//匿名函数
     var func = {};
-    func._args = this.visit(ctx.getChild(0));
+    func._args = this.visit(ctx.getChild(0))[0];
+    func._default = this.visit(ctx.getChild(0))[1];
     func._statements = ctx.getChild(3);
     func.envir = this.currentScope;
     return func;
@@ -177,10 +177,12 @@ Interpreter.prototype.visitLambda = function(ctx){//匿名函数
 Interpreter.prototype.visitDef = function(ctx){//函数的定义
     var name = ctx.getChild(1).getText();
     var func = {};
-    func._args = this.visit(ctx.getChild(2));//函数的参数
+    func._args = this.visit(ctx.getChild(2))[0];//函数的参数
+    func._default = this.visit(ctx.getChild(2))[1];//函数的默认参数
     func._statements = ctx.getChild(5);//函数的执行代码
     func.envir = this.currentScope;//记录下当下的定义时的环境
     this.currentScope[name] = func;
+    console.log(func);
     return func;
 }
 
@@ -189,9 +191,8 @@ Interpreter.prototype.visitCall = function(ctx){//函数调用
     if(! func instanceof Object && ! _args in func)
         throw {"message" : name+" is not a function"};
     var args = [];
-    for(var i = 0; i < func._args.length; i++){
+    for(var i = 0; 2*i+2 < ctx.getChildCount(); i++){
         args.push(this.visit(ctx.getChild(2*i+2)));
-        //console.log("x"+this.visit(ctx.getChild(2*i+2)));
     }
 
     return this.CallFunc(func,args)
@@ -200,18 +201,31 @@ Interpreter.prototype.visitCall = function(ctx){//函数调用
 Interpreter.prototype.CallFunc = function(func,args){
     if(! func instanceof Object && ! _args in func)
         throw {"message" : name+" is not a function"};
-    if (args.length !== func._args.length)
-        throw {"message" : "argument num error"};
     if('call' in func){//如果是内置的函数
         args.push(this)
         return func.call(args);
     }
+    console.log(func)
+    if(args.length < func._args.length || args.length > func._args.length + func._default.length){
+        console.log(args.length);
+        console.log(func._args.length);
+        console.log(func._default.length);
+        throw {"message": "arguement num error"};
+    }
     var newScope = Object.create(func["envir"]);
     newScope._parent = this.currentScope;
-    for(var i = 0; i < args.length; i++){
-        newScope[func._args[i]] = args[i];
+
+
+    for(var i = 0; i < func._args.length + func._default.length ; i++){
+        if(i < func._args.length)
+            newScope[func._args[i]] = args[i];
+        else if(func._args.length <= i && i < args.length)
+            newScope[func._default[i-func._args.length]["name"]] = args[i];
+        else if(args.length <= i && i < func._args.length + func._default.length)
+            newScope[func._default[i-func._args.length]["name"]] = func._default[i-func._args.length]["default"];
     }
 
+    //console.log(newScope)
     this.currentScope = newScope;//执行前进入作用域
     var re = this.visit(func._statements);
     this.currentScope = this.currentScope._parent;//执行后从作用域当中返回
@@ -221,7 +235,7 @@ Interpreter.prototype.CallFunc = function(func,args){
 Interpreter.prototype.visitName = function(ctx){
     var name = ctx.getText()
     lookScope = this.currentScope;
-    while(lookScope){//在环境当中查找变量
+    while(lookScope){
         if(name in lookScope)
             return lookScope[name];
         else 
@@ -232,10 +246,20 @@ Interpreter.prototype.visitName = function(ctx){
 
 Interpreter.prototype.visitArgs = function(ctx){
     var args = [];
+    var defaultargs = []
     for (var i = 1; i < ctx.getChildCount() - 1; i+=2){
-        args.push(ctx.getChild(i).getText());
+        if(ctx.getChild(i).getText().indexOf("=") !== -1)    
+            defaultargs.push(this.visit(ctx.getChild(i)));
+        else 
+            args.push(ctx.getChild(i).getText());
     }
-    return args;
+    return [args,defaultargs];
+}
+
+Interpreter.prototype.visitDefaultarg = function(ctx){
+    var name = ctx.getChild(0).getText();
+    var defaultValue = this.visit(ctx.getChild(2))
+    return {"name" :name , "default" : defaultValue};
 }
 
 Interpreter.prototype.visitForloop = function(ctx){
@@ -244,10 +268,7 @@ Interpreter.prototype.visitForloop = function(ctx){
     if (typeof list !== "object"){
         throw {"message" : typeof list + " is not iterable"};
     }
-    var newScope = Object.create(this.currentScope);
     var re;
-    newScope._parent = this.currentScope;
-    this.currentScope = newScope;
     if(list instanceof Array){
         for(var i = 0; i<list.length ;i++){
             this.currentScope[name] = list[i];
@@ -260,7 +281,6 @@ Interpreter.prototype.visitForloop = function(ctx){
             re = this.visit(ctx.getChild(6));
         }
     }
-    this.currentScope = this.currentScope._parent;
     return re;
 }
 
